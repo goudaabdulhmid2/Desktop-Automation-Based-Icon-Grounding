@@ -4,7 +4,16 @@ from pathlib import Path
 
 # Paths
 HOME_DIR = Path.home()
-DESKTOP_PATH = HOME_DIR / "Desktop"
+
+# Auto-detect Desktop path (handle OneDrive)
+ONE_DRIVE_DESKTOP = HOME_DIR / "OneDrive" / "Desktop"
+STANDARD_DESKTOP = HOME_DIR / "Desktop"
+
+if ONE_DRIVE_DESKTOP.exists():
+    DESKTOP_PATH = ONE_DRIVE_DESKTOP
+else:
+    DESKTOP_PATH = STANDARD_DESKTOP
+
 PROJECT_DIR_NAME = "tjm-project"
 OUTPUT_DIR = DESKTOP_PATH / PROJECT_DIR_NAME
 
