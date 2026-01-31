@@ -1,7 +1,3 @@
-"""
-Main entry point for desktop automation project.
-Orchestrates grounding, API fetching, and Notepad automation.
-"""
 import sys
 import time
 from pathlib import Path
@@ -64,6 +60,7 @@ class DesktopAutomationWorkflow:
     def _setup_grounding(self) -> MultiStrategyGrounding:
         """
         Set up multi-strategy grounding system.
+        Prioritizes vision model for maximum flexibility.
         
         Returns:
             Configured MultiStrategyGrounding instance
@@ -72,7 +69,30 @@ class DesktopAutomationWorkflow:
         
         grounding = MultiStrategyGrounding()
         
-        # Strategy 1: Adaptive Template Matching (try multiple thresholds)
+        # Strategy 1: Vision Model (BEST - most flexible, no templates needed)
+        # This is what the project requirements specifically ask for!
+        try:
+            from grounding import VisionModelGrounding, VISION_AVAILABLE
+            
+            if VISION_AVAILABLE:
+                vision_strategy = VisionModelGrounding(
+                    model_name="microsoft/Florence-2-base",  # Fast model
+                    # Use "microsoft/Florence-2-large" for better accuracy (slower)
+                    device=None,  # Auto-detect GPU/CPU
+                    name="Florence2"
+                )
+                grounding.add_strategy(vision_strategy)
+                logger.info("  ✓ Added Vision Model strategy (Florence-2)")
+                logger.info("    → Can detect ANY UI element by description!")
+                logger.info("    → No template images needed!")
+            else:
+                logger.warning("  ⚠ Vision model dependencies not available")
+                logger.info("    Install: pip install transformers torch --break-system-packages")
+        except Exception as e:
+            logger.warning(f"  ✗ Could not load vision model: {e}")
+            logger.info("    Falling back to traditional CV strategies")
+        
+        # Strategy 2: Adaptive Template Matching (FALLBACK - fast but needs template)
         try:
             template_strategy = AdaptiveTemplateGrounding(
                 template_path=config.TEMPLATE_PATH,
@@ -80,11 +100,12 @@ class DesktopAutomationWorkflow:
                 name="AdaptiveTemplate"
             )
             grounding.add_strategy(template_strategy)
-            logger.info("  ✓ Added AdaptiveTemplate strategy")
+            logger.info("  ✓ Added AdaptiveTemplate strategy (fallback)")
         except Exception as e:
-            logger.warning(f"  ✗ Could not add template strategy: {e}")
+            logger.warning(f"  ⚠ Could not add template strategy: {e}")
+            logger.info("    (Template not found - OK if using vision model)")
         
-        # Strategy 2: Fuzzy OCR (fallback for text-based icons)
+        # Strategy 3: Fuzzy OCR (LAST RESORT - for text-based icons)
         try:
             ocr_strategy = FuzzyOCRGrounding(
                 languages=['en'],
@@ -93,14 +114,20 @@ class DesktopAutomationWorkflow:
                 name="FuzzyOCR"
             )
             grounding.add_strategy(ocr_strategy)
-            logger.info("  ✓ Added FuzzyOCR strategy")
+            logger.info("  ✓ Added FuzzyOCR strategy (last resort)")
         except Exception as e:
-            logger.warning(f"  ✗ Could not add OCR strategy: {e}")
+            logger.warning(f"  ⚠ Could not add OCR strategy: {e}")
         
         if len(grounding.strategies) == 0:
-            raise RuntimeError("No grounding strategies available! Check dependencies.")
+            raise RuntimeError(
+                "No grounding strategies available! Install dependencies:\n"
+                "  Vision model: pip install transformers torch --break-system-packages\n"
+                "  OCR: pip install easyocr --break-system-packages\n"
+                "  Template: Create resources/notepad_icon.png"
+            )
         
         logger.info(f"Grounding system ready with {len(grounding.strategies)} strategies")
+        logger.info("=" * 70)
         return grounding
     
     @retry_on_exception(max_attempts=config.MAX_GROUNDING_ATTEMPTS, delay=config.GROUNDING_RETRY_DELAY)

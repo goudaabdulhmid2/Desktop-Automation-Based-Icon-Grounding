@@ -1,0 +1,16 @@
+pyautogui>=0.9.54
+pygetwindow>=0.0.9
+pyperclip>=1.8.2
+Pillow>=10.0.0
+numpy>=1.24.0
+opencv-python>=4.8.0
+easyocr>=1.7.0
+botcity-framework-core>=0.4.0
+requests>=2.31.0
+python-dateutil>=2.8.2
+transformers>=4.38.0
+torch>=2.0.0
+torchvision>=0.15.0
+accelerate>=0.26.0
+einops
+timm
