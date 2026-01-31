@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "D:\Hamid\Backend\Projects_Node\pra\tjm-project\main.py", line 9, in <module>
-    from automation import NotepadController
-ImportError: cannot import name 'NotepadController' from 'automation' (unknown location)
