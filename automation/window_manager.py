@@ -1,6 +1,3 @@
-"""
-Window manager for finding, activating, and closing windows.
-"""
 import pygetwindow as gw
 import time
 from typing import List, Optional

@@ -69,9 +69,7 @@ class DesktopAutomationWorkflow:
         
         grounding = MultiStrategyGrounding()
         
-        # Strategy 1: Adaptive Template Matching (Preferred fallback)
-        
-        # Strategy 2: Adaptive Template Matching (FALLBACK - fast but needs template)
+        # Strategy 1: Adaptive Template Matching (Primary - fast and reliable)
         try:
             template_strategy = AdaptiveTemplateGrounding(
                 template_path=config.TEMPLATE_PATH,
@@ -79,12 +77,12 @@ class DesktopAutomationWorkflow:
                 name="AdaptiveTemplate"
             )
             grounding.add_strategy(template_strategy)
-            logger.info("  ✓ Added AdaptiveTemplate strategy (fallback)")
+            logger.info("  ✓ Added AdaptiveTemplate strategy (Primary)")
         except Exception as e:
             logger.warning(f"  ⚠ Could not add template strategy: {e}")
-            logger.info("    (Template not found - OK if using vision model)")
+            logger.info("    (Ensure resources/notepad_icon.png exists)")
         
-        # Strategy 3: Fuzzy OCR (LAST RESORT - for text-based icons)
+        # Strategy 2: Fuzzy OCR (Fallback - for text-based icons)
         try:
             ocr_strategy = FuzzyOCRGrounding(
                 languages=['en'],
@@ -93,16 +91,15 @@ class DesktopAutomationWorkflow:
                 name="FuzzyOCR"
             )
             grounding.add_strategy(ocr_strategy)
-            logger.info("  ✓ Added FuzzyOCR strategy (last resort)")
+            logger.info("  ✓ Added FuzzyOCR strategy (Fallback)")
         except Exception as e:
             logger.warning(f"  ⚠ Could not add OCR strategy: {e}")
         
         if len(grounding.strategies) == 0:
             raise RuntimeError(
-                "No grounding strategies available! Install dependencies:\n"
-                "  Vision model: pip install transformers torch --break-system-packages\n"
-                "  OCR: pip install easyocr --break-system-packages\n"
-                "  Template: Create resources/notepad_icon.png"
+                "No grounding strategies available! Please fix configuration:\n"
+                "  Template: Create resources/notepad_icon.png\n"
+                "  OCR: pip install easyocr --break-system-packages"
             )
         
         logger.info(f"Grounding system ready with {len(grounding.strategies)} strategies")
