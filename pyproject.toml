@@ -1,0 +1,70 @@
+[project]
+name = "desktop-automation"
+version = "1.0.0"
+description = "Vision-based desktop automation with dynamic icon grounding"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+keywords = ["automation", "computer-vision", "desktop", "grounding"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+dependencies = [
+    "pyautogui>=0.9.54",
+    "pygetwindow>=0.0.9",
+    "pyperclip>=1.8.2",
+    "Pillow>=10.0.0",
+    "numpy>=1.24.0",
+    "opencv-python>=4.8.0",
+    "easyocr>=1.7.0",
+    "botcity-core>=0.4.0",
+    "requests>=2.31.0",
+    "python-dateutil>=2.8.2",
+]
+
+[project.optional-dependencies]
+gpu = [
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "black>=23.7.0",
+    "flake8>=6.1.0",
+    "mypy>=1.5.0",
+]
+
+[project.scripts]
+desktop-automation = "main:main"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["automation", "grounding", "data", "utils"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
