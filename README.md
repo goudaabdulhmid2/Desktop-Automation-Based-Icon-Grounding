@@ -1,24 +1,21 @@
-# Desktop Automation - Vision-Based Icon Grounding
+# Desktop Automation - Intelligent Icon Grounding
 
-A robust, vision-based desktop automation system that utilizes the state-of-the-art **Florence-2 Vision-Language Model** to dynamically locate and interact with desktop icons. This system is designed to handle moving icons, unexpected pop-ups, and varying screen states without relying on brittle fixed coordinates.
+A robust, lightweight desktop automation system that dynamically locates and interacts with desktop icons using smart template matching and OCR. This system is designed to handle moving icons and varying desktop states with high reliability.
 
 ## 🎯 Project Overview
 
 This project implements a complete pipeline that:
 1.  **Fetches Data**: Retrieves blog post data from JSONPlaceholder API (with local fallback).
-2.  **Locates Target**: Uses Computer Vision (Florence-2) to find the "Notepad" icon on your desktop, regardless of where it is placed.
+2.  **Locates Target**: Uses Adaptive Template Matching to find the "Notepad" icon on your desktop.
 3.  **Automates Workflow**: Opens Notepad, types the content, saves the file to a specific folder, and closes the application.
 4.  **Verifies**: checks window states and file creation to ensure success.
 
 ### Key Features
 
-*   **🧠 Advanced Vision Grounding**: Uses Microsoft's **Florence-2** model to find UI elements by natural language description (e.g., "Notepad icon", "Save button"). No template images required!
-*   **🛡️ Multi-Strategy Fallback**:
-    1.  **Primary**: Vision Model (Florence-2) - flexible and robust.
-    2.  **Secondary**: Template Matching (BotCity) - fast if standard icons are used.
-    3.  **Tertiary**: OCR (Optical Character Recognition) - finds elements by reading text.
+*   **🔍 Adaptive Template Matching**: Uses BotCity's advanced image matching with dynamic thresholding to find icons even if they are slightly different.
+*   **� Optical Character Recognition (OCR)**: Falls back to reading text on the screen if the image match fails (using EasyOCR).
 *   **☁️ Cloud-Aware**: Automatically detects Desktop path, including **OneDrive** configurations.
-*   **⚡ Modern Stack**: Built with `uv` for fast, reliable dependency management.
+*   **⚡ Lightweight**: No heavy AI models (Torch/Transformers) required. Installs and runs instantly.
 *   **🔄 Reliability**: Built-in retry logic, comprehensive logging, and error recovery.
 
 ## 📁 Project Structure
@@ -30,9 +27,8 @@ tjm-project/
 ├── config.py                        # Configuration (paths, timeouts, thresholds)
 │
 ├── grounding/                       # Intelligence Layer
-│   ├── vision_grounding.py         # Florence-2 Vision Model implementation
-│   ├── template_grounding.py       # Template matching strategy
-│   ├── ocr_grounding.py            # OCR strategy
+│   ├── template_grounding.py       # Primary Strategy: Image matching
+│   ├── ocr_grounding.py            # Secondary Strategy: Text reading
 │   └── screenshot.py               # Screen capture utilities
 │
 ├── automation/                      # Action Layer
@@ -62,7 +58,7 @@ We use **uv** for ultra-fast package management.
 ### Prerequisites
 *   Windows 10/11
 *   Python 3.9 or higher
-*   **Notepad** shortcut detected on your Desktop (Naming it "Notepad" is recommended).
+*   **Notepad** shortcut detected on your Desktop (saved as `resources/notepad_icon.png`).
 
 ### 1. Install uv
 If you don't have it yet:
@@ -71,12 +67,10 @@ pip install uv
 ```
 
 ### 2. Sync Dependencies
-This will create a virtual environment and install all necessary packages (including PyTorch for the AI model).
+This will create a virtual environment and install all necessary packages.
 ```powershell
 uv sync
 ```
-
-> **Note**: The first run will download the Florence-2 model (~500MB). This is normal and happens only once.
 
 ## ▶️ Usage
 
@@ -88,8 +82,8 @@ uv run main.py
 ```
 
 ### How it Works
-1.  The script initializes and loads the AI models.
-2.  It looks for a "Notepad" icon on your visible Desktop.
+1.  The system initializes.
+2.  It looks for the "Notepad" icon using the image in `resources/notepad_icon.png`.
 3.  For each post fetched from the API:
     *   It opens Notepad.
     *   Writes the post title and body.
@@ -100,7 +94,7 @@ uv run main.py
 You can customize behavior in `config.py`:
 *   **`POSTS_COUNT`**: Number of posts to process.
 *   **`WINDOW_WAIT_TIMEOUT`**: How long to wait for Notepad to open.
-*   **`SHOW_DEBUG_SCREENSHOTS`**: Save images showing where the AI found the icon.
+*   **`SHOW_DEBUG_SCREENSHOTS`**: Save images showing where the system found the icon.
 
 ## 🐛 Troubleshooting
 
@@ -108,5 +102,5 @@ You can customize behavior in `config.py`:
     The system now automatically checks for `OneDrive\Desktop`. If your desktop is elsewhere, edit `config.py`.
 *   **Notepad not opening?**
     Ensure the shortcut is on the main desktop screen and not covered by other windows.
-*   **Dependency errors?**
-    Run `uv sync` again to ensure your environment is clean.
+*   **Icon not found?**
+    Make sure `resources/notepad_icon.png` matches how your Notepad icon looks on your current wallpaper. You might need to take a fresh screenshot/crop of your icon and replace that file.

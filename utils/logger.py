@@ -61,7 +61,7 @@ def setup_file_logger(name: str, log_file: Path = None, level: str = None) -> lo
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         log_file = logs_dir / f"automation_{timestamp}.log"
     
-    file_handler = logging.FileHandler(log_file)
+    file_handler = logging.FileHandler(log_file, encoding='utf-8')
     file_handler.setLevel(getattr(logging, level.upper()))
     
     formatter = logging.Formatter(config.LOG_FORMAT)

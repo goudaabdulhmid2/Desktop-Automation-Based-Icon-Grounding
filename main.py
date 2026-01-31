@@ -69,28 +69,7 @@ class DesktopAutomationWorkflow:
         
         grounding = MultiStrategyGrounding()
         
-        # Strategy 1: Vision Model (BEST - most flexible, no templates needed)
-        # This is what the project requirements specifically ask for!
-        try:
-            from grounding import VisionModelGrounding, VISION_AVAILABLE
-            
-            if VISION_AVAILABLE:
-                vision_strategy = VisionModelGrounding(
-                    model_name="microsoft/Florence-2-base",  # Fast model
-                    # Use "microsoft/Florence-2-large" for better accuracy (slower)
-                    device=None,  # Auto-detect GPU/CPU
-                    name="Florence2"
-                )
-                grounding.add_strategy(vision_strategy)
-                logger.info("  ✓ Added Vision Model strategy (Florence-2)")
-                logger.info("    → Can detect ANY UI element by description!")
-                logger.info("    → No template images needed!")
-            else:
-                logger.warning("  ⚠ Vision model dependencies not available")
-                logger.info("    Install: pip install transformers torch --break-system-packages")
-        except Exception as e:
-            logger.warning(f"  ✗ Could not load vision model: {e}")
-            logger.info("    Falling back to traditional CV strategies")
+        # Strategy 1: Adaptive Template Matching (Preferred fallback)
         
         # Strategy 2: Adaptive Template Matching (FALLBACK - fast but needs template)
         try:
