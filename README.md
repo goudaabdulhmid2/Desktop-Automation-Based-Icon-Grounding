@@ -21,7 +21,7 @@ This project implements a complete pipeline that:
 ## 📁 Project Structure
 
 ```
-tjm-project/
+project/
 │
 ├── main.py                          # Entry point - orchestrates the workflow
 ├── config.py                        # Configuration (paths, timeouts, thresholds)
@@ -87,7 +87,7 @@ uv run main.py
 3.  For each post fetched from the API:
     *   It opens Notepad.
     *   Writes the post title and body.
-    *   Saves it as `post_{id}.txt` in standard `Desktop/tjm-project` folder.
+    *   Saves it as `post_{id}.txt` in standard `Desktop/project` folder.
     *   Closes Notepad.
 
 ### Configuration
