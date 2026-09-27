@@ -14,7 +14,7 @@ if ONE_DRIVE_DESKTOP.exists():
 else:
     DESKTOP_PATH = STANDARD_DESKTOP
 
-PROJECT_DIR_NAME = "tjm-project"
+PROJECT_DIR_NAME = "project"
 OUTPUT_DIR = DESKTOP_PATH / PROJECT_DIR_NAME
 
 # Get the project root directory
